@@ -1,24 +1,39 @@
-import logo from './logo.svg';
 import './App.css';
+import {useEffect} from "react"
+import Header from './components/Header/Header'
+import Home from './components/Home/Home'
+import {BrowserRouter as Router,Switch,Route} from 'react-router-dom'
+import Checkout from './components/Checkout/Checkout';
+import Login from './components/Login/Login';
+import { auth } from './firebase';
+import { useStateValue } from './components/Providers/StateProvider';
 
 function App() {
+  // eslint-disable-next-line
+  const [{},dispatch] = useStateValue()
+  useEffect(()=>{
+    auth.onAuthStateChanged((user)=>{
+      dispatch({type:'SET_USER',user:user})
+    })
+  },[])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Router>
+       <div className="app">
+      <Switch>
+        <Route path="/login">
+            <Login />
+        </Route>
+        <Route path="/checkout">
+          <Header />
+          <Checkout />
+        </Route>
+        <Route path="/">
+          <Header />
+          <Home />
+        </Route>
+      </Switch>
     </div>
+    </Router>
   );
 }
 
